@@ -36,7 +36,7 @@ class Trainer():
         
     def train(self):
         
-        print(f"TRAINING STARTED using device = {self.device} ....",end="\n \n")
+        print(f"TRAINING STARTED using device = {self.device} .... training will continue for {self.number_of_epochs} epochs",end="\n \n")
         for e in range(1,self.number_of_epochs+1):
             
             print(f"    epoch #{e}")
@@ -64,7 +64,7 @@ class Trainer():
     def _save_model(self):  
         # move state dict to cpu
         state_dict = {k: v.cpu() for k, v in self.model.state_dict().items()}
-        torch.save(state_dict,os.path.join(model_path,"model.pth"))
+        torch.save(state_dict,os.path.join(self.model_path,"model.pth"))
         
     def _train_epoch(self):
         self.model.train()
