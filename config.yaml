@@ -1,0 +1,6 @@
+model_name: cbow
+
+batch_size: 96
+
+learning_rate: 0.025
+epochs: 10
