@@ -95,7 +95,7 @@ def get_data_loader_and_vocab(model_name,data_split,batch_size=1,shuffle=True,vo
     
     # build vocab
     if vocab is None:
-        v = _build_vocab(data_itr,tokenizer)
+        vocab = _build_vocab(data_itr,tokenizer)
         
     text_to_idxs_pipeline = lambda x:v(tokenizer(x))
     if model_name == "cbow":
@@ -107,4 +107,4 @@ def get_data_loader_and_vocab(model_name,data_split,batch_size=1,shuffle=True,vo
     
     dataloader = DataLoader(data_itr, batch_size=batch_size, shuffle=shuffle,collate_fn= partial(collate_fn,text_to_idxs_pipeline=text_to_idxs_pipeline))
     
-    return dataloader,v
+    return dataloader,vocab
