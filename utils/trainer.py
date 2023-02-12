@@ -31,6 +31,14 @@ class Trainer():
         
         self.min_val_loss = np.inf
         
+        # calculate number of steps in an epoch (usually we can get this with len(dataloader) but in our case we haven't implemented the __len__ function in the dataset so we will have to do it manually)
+        self.num_steps_train = 0
+        self.num_steps_val   = 0
+        for _ in self.train_loader:
+            self.num_steps_train+=1
+        for _ in self.val_loader:
+            self.num_steps_val+=1
+            
         # send model to device
         self.model.to(self.device)
         
@@ -42,12 +50,12 @@ class Trainer():
             print(f"    epoch #{e}")
             
             print(f"        training ...",end=" ")
-            epoch_loss = self._train_epoch()
+            epoch_loss = self._train_epoch(e)
             self.writer.add_scalar("train_loss_per_epoch",epoch_loss,e)
             print("DONE")
 
             print(f"        evaluating ...",end=" ")
-            epoch_loss = self._val_epoch()
+            epoch_loss = self._val_epoch(e)
             self.writer.add_scalar("val_loss_per_epoch",epoch_loss,e)
             if epoch_loss < self.min_val_loss:
                 print(" Saving best model so far ...",end=" ")
@@ -66,7 +74,7 @@ class Trainer():
         state_dict = {k: v.cpu() for k, v in self.model.state_dict().items()}
         torch.save(state_dict,os.path.join(self.model_path,"model.pth"))
         
-    def _train_epoch(self):
+    def _train_epoch(self,epoch):
         self.model.train()
         
         running_loss = []
@@ -83,7 +91,7 @@ class Trainer():
             
             # reigister running loss
             step_loss = loss.detach().item()
-            self.writer.add_scalar("train_loss_per_step",step_loss,i)
+            self.writer.add_scalar("train_loss_per_step",step_loss,(self.number_steps_train*(epoch-1)) + i)
             running_loss.append(step_loss)
             
             # backward prob
@@ -96,7 +104,7 @@ class Trainer():
         epoch_loss = np.mean(running_loss)
         return epoch_loss
     
-    def _val_epoch(self):
+    def _val_epoch(self,epoch):
         self.model.eval()
         
         running_loss = []
@@ -114,7 +122,7 @@ class Trainer():
 
                 # reigister running loss
                 step_loss = loss.detach().item()
-                self.writer.add_scalar("val_loss_per_step",step_loss,i)
+                self.writer.add_scalar("val_loss_per_step",step_loss,(self.number_steps_val*(epoch-1)) + i)
                 running_loss.append(step_loss)
         
         epoch_loss = np.mean(running_loss)
