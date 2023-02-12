@@ -50,8 +50,8 @@ def _CBOW_collate_fn(batch,text_to_idxs_pipeline):
             X.append(context_tokens)
             Y.append(middle_token)
             
-    X = torch.tensor(X,dtype=torch.float32)
-    Y = torch.tensor(Y,dtype=torch.float32)
+    X = torch.tensor(X,dtype=torch.long)
+    Y = torch.tensor(Y,dtype=torch.long)
     
     return X,Y
 
@@ -79,8 +79,8 @@ def _SKIPGRAM_collate_fn(batch,text_to_idxs_pipeline):
                 X.append(middle_token)
                 Y.append(c)
             
-    X = torch.tensor(X,dtype=torch.float32)
-    Y = torch.tensor(Y,dtype=torch.float32)
+    X = torch.tensor(X,dtype=torch.long)
+    Y = torch.tensor(Y,dtype=torch.long)
     
     return X,Y
 
@@ -97,10 +97,10 @@ def get_data_loader_and_vocab(model_name,data_split,batch_size=1,shuffle=True,vo
     if vocab is None:
         vocab = _build_vocab(data_itr,tokenizer)
         
-    text_to_idxs_pipeline = lambda x:v(tokenizer(x))
-    if model_name == "cbow":
+    text_to_idxs_pipeline = lambda x:vocab(tokenizer(x))
+    if model_name.startswith("cbow"):
         collate_fn = _CBOW_collate_fn
-    elif model_name == "skipgram":
+    elif model_name.startswith("skipgram"):
         collate_fn = _SKIPGRAM_collate_fn
     else:
         raise Exception("unknown model name, model name is expected to be either cbow or skipgram.")

@@ -18,8 +18,8 @@ class cbow_model(nn.Module):
         '''
         x has dimentions batch_size X 2*CONSTANTS.context_size
         '''
-        x = x.mean(dim=1) # average context words ==> x has dimentions (batch_size)
-        x = self.embed(x) # get embeddings =========> x has dimentions (batch_size X CONSTATNS.embed_size)
+        x = self.embed(x) # get embeddings =========> x has dimentions (batch_size X 2*CONSTANTS.context_size X CONSTATNS.embed_size)
+        x = x.mean(dim=1) # average embeddings of context words ==> x has dimentions (batch_size X CONSTATNS.embed_size )
         x = self.lin(x)   # get simillarity with all vocab => x has dimentions (batch_size * vocab_size)
         return x
     
@@ -33,10 +33,8 @@ class cbow_model_one_embedding_per_token(nn.Module):
         '''
         x has dimentions (batch_size X 2*CONSTANTS.context_size)
         '''
-        x = x.mean(dim=1) # average context words ==> x has dimentions (batch_size)
-        
-        # get the batch embeddings
-        x = self.embed(x) # x now has the shape (batch_size X CONSTANTS.embed_size)
+        x = self.embed(x) # get embeddings =========> x has dimentions (batch_size X 2*CONSTANTS.context_size X CONSTATNS.embed_size)
+        x = x.mean(dim=1) # average embeddings of context words ==> x has dimentions (batch_size X CONSTATNS.embed_size )
         
         # get all embeddings
         all_embeddings = self.embed.weight
