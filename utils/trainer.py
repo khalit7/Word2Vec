@@ -44,7 +44,7 @@ class Trainer():
         
     def train(self):
         
-        print(f"TRAINING STARTED using device = {self.device} .... training will continue for {self.number_of_epochs} epochs",end="\n \n")
+        print(f"TRAINING STARTED using device = {self.device} .... training the model {self.model_name}, the training will continue for {self.number_of_epochs} epochs",end="\n \n")
         for e in range(1,self.number_of_epochs+1):
             
             print(f"    epoch #{e}")
@@ -91,7 +91,7 @@ class Trainer():
             
             # reigister running loss
             step_loss = loss.detach().item()
-            self.writer.add_scalar("train_loss_per_step",step_loss,(self.number_steps_train*(epoch-1)) + i)
+            self.writer.add_scalar("train_loss_per_step",step_loss,(self.num_steps_train*(epoch-1)) + i)
             running_loss.append(step_loss)
             
             # backward prob
@@ -122,7 +122,7 @@ class Trainer():
 
                 # reigister running loss
                 step_loss = loss.detach().item()
-                self.writer.add_scalar("val_loss_per_step",step_loss,(self.number_steps_val*(epoch-1)) + i)
+                self.writer.add_scalar("val_loss_per_step",step_loss,(self.num_steps_val*(epoch-1)) + i)
                 running_loss.append(step_loss)
         
         epoch_loss = np.mean(running_loss)
